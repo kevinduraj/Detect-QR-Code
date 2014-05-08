@@ -2,6 +2,7 @@ package detectqrcode;
 
 import a_otsu_bin.OtsuBinarize;
 import b_components.*;
+import c_hitandmiss.HitAndMiss;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,14 +10,37 @@ import javax.imageio.ImageIO;
 
 public class Main {
 
-    private static final String filename = "qrcode4";
+    private static final String filename = "lenna";
     
+    public static final int[][] bottomLeft = {
+        { -1, 0,  0 },
+        {  1, 1,  0 },
+        { -1, 1, -1 }
+    };
+    
+     public static final int[][] topLeft = {
+        { -1, 1, -1 },
+        {  1, 1,  0 },
+        { -1, 0,  0 }
+    };
+     
+    public static final int[][] bottomRight = {
+        { 0,  0, -1 },
+        { 0,  1,  1 },
+        { -1, 1, -1 }
+    };
+
+    public static final int[][] topRight = {
+        { -1, 1, -1 },
+        { 0,  1,  1 },
+        { 0,  0, -1 }
+    };    
     /*--------------------------------------------------------------------------------------------*/
     public static void main(String[] args) throws IOException {
 
         Otsu();
         Region();
-        
+        ProcesHit2Miss();
     }
     /*--------------------------------------------------------------------------------------------*/
     private static void Otsu() throws IOException {
@@ -40,6 +64,21 @@ public class Main {
         ImageWrite("src/output3/" + filename + ".png", max);    
 
     }
+    /*--------------------------------------------------------------------------------------------*/
+
+    public static void ProcesHit2Miss() throws IOException {
+       
+        int[][] image = ImageRead("src/output3/" + filename + ".png");
+        HitAndMiss hit = new HitAndMiss(image);
+
+        hit.convolve( topLeft, "topLeft");
+        hit.convolve( topRight, "topRight");
+        hit.convolve( bottomLeft, "bottomLeft");       
+        hit.convolve( bottomRight, "bottomRight");
+        
+        System.out.println(hit.qrcodeDetection());
+        ImageWrite("src/output4/" + filename  + ".png", hit.outImage);
+    }  
     /*--------------------------------------------------------------------------------------------*/
     private static int[][] ImageRead(String filename) throws IOException {
 
