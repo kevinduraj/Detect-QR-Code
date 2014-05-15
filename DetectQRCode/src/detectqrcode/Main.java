@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class Main {
 
-    private static final String filename = "lenna";
+    private static final String filename = "qrcode4";
     
     public static final int[][] bottomLeft = {
         { -1, 0,  0 },
